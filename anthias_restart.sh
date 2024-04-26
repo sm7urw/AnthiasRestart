@@ -1,6 +1,6 @@
 # Restart Anthias coker container.
 # Henrik Korslind
-# Version: 1.0
+# Version: 1.1
 
 #!/bin/bash
 
@@ -13,5 +13,5 @@ docker-compose down
 # Run the upgrade_containers.sh script
 ./bin/upgrade_containers.sh
 
-# Send an email notification
-echo "Anthias container has restarted." | mail -s "Anthias restarted" email@address.com # Send an email notification
+# Send an email notification via Python
+python3 send_mail.py
