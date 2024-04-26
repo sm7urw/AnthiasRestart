@@ -1,4 +1,4 @@
-# Restart Anthias coker container.
+# Restart Anthias doker container.
 # Henrik Korslind
 # Version: 1.1
 
@@ -14,4 +14,4 @@ docker-compose down
 ./bin/upgrade_containers.sh
 
 # Send an email notification via Python
-python3 send_mail.py
+python3 /home/$USER/send_mail.py
