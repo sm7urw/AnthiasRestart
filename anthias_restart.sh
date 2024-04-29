@@ -8,7 +8,7 @@
 cd /home/$USER/screenly
 
 # Bring down the Docker Compose services
-docker-compose down
+docker compose down
 
 # Run the upgrade_containers.sh script
 ./bin/upgrade_containers.sh
