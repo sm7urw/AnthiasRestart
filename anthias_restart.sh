@@ -1,6 +1,6 @@
 # Restart Anthias doker container.
 # Henrik Korslind
-# Version: 1.1
+# Version: 1.3
 
 #!/bin/bash
 
@@ -15,3 +15,4 @@ docker compose down
 
 # Send an email notification via Python
 python3 /home/$USER/send_mail.py
+echo "Sending email to user"
