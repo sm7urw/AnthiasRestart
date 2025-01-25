@@ -1,47 +1,47 @@
-# Restart Anthias docker container and send email to user.
+# Stop, update and restart Anthias docker container and send email to user while creating log entry.
 # Henrik Korslind
-# Version: 1.3
+# Version: 1.5
 
 #!/bin/bash
 
-# Loggfil för scriptkörningar
+# Logfile for script
 LOGFILE="/home/$USER/anthias_upgrade.log"
 
-# Funktion för att logga med tidsstämpel
+# Function for addning time and date to log entry
 log() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a $LOGFILE
 }
 
-# Ändra till den angivna katalogen
-cd /home/$USER/screenly || { log "Misslyckades med att byta katalog till /home/$USER/screenly"; exit 1; }
+# Change directory
+cd /home/$USER/screenly || { log "Failed to change dir to /home/$USER/screenly"; exit 1; }
 
-# Stäng ner Docker Compose-tjänster och logga resultatet
-log "Stänger ner Docker Compose-tjänster..."
+# Shut down Docker Compose-service and log the result
+log "Shutting down the Docker Compose service..."
 if docker compose down; then
-    log "Docker Compose-tjänster nedstängda."
+    log "Docker Compose service shut down."
 else
-    log "Fel vid nedstängning av Docker Compose-tjänster."
+    log "Error while shutting down Docker Compose service."
     exit 1
 fi
 
-# Kör upgrade_containers.sh och logga resultatet
-log "Kör upgrade_containers.sh..."
+# Run upgrade_containers.sh and log the result
+log "Running upgrade_containers.sh..."
 if ./bin/upgrade_containers.sh; then
-    log "Uppgradering av containrar klar."
+    log "Update container finished."
 else
-    log "Fel vid uppgradering av containrar."
+    log "Error while updating container."
     exit 1
 fi
 
-# Skicka ett e-postmeddelande via Python och logga resultatet
-log "Skickar e-post till användaren..."
+# Send email via Python and write result to logfile
+log "Sending e-mail to user..."
 if python3 /home/$USER/send_mail.py; then
-    log "E-post skickad till användaren."
+    log "E-mail sent to user."
 else
-    log "Fel vid e-postskick."
+    log "Error while sending e-mail."
     exit 1
 fi
 
-# Skriv ut ett meddelande på skärmen
-log "Skriptet slutfört."
+# Write message on screen
+log "Script finished."
 echo "Sending email to user"
