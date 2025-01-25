@@ -4,17 +4,44 @@
 
 #!/bin/bash
 
-# Change directory to the specified path
-cd /home/$USER/screenly
+# Loggfil för scriptkörningar
+LOGFILE="/home/$USER/anthias_upgrade.log"
 
-# Bring down the Docker Compose services
-docker compose down
+# Funktion för att logga med tidsstämpel
+log() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a $LOGFILE
+}
 
-# Run the upgrade_containers.sh script
-./bin/upgrade_containers.sh
+# Ändra till den angivna katalogen
+cd /home/$USER/screenly || { log "Misslyckades med att byta katalog till /home/$USER/screenly"; exit 1; }
 
-# Send an email notification via Python
-python3 /home/$USER/send_mail.py
+# Stäng ner Docker Compose-tjänster och logga resultatet
+log "Stänger ner Docker Compose-tjänster..."
+if docker compose down; then
+    log "Docker Compose-tjänster nedstängda."
+else
+    log "Fel vid nedstängning av Docker Compose-tjänster."
+    exit 1
+fi
 
-# Print out a message on screen
+# Kör upgrade_containers.sh och logga resultatet
+log "Kör upgrade_containers.sh..."
+if ./bin/upgrade_containers.sh; then
+    log "Uppgradering av containrar klar."
+else
+    log "Fel vid uppgradering av containrar."
+    exit 1
+fi
+
+# Skicka ett e-postmeddelande via Python och logga resultatet
+log "Skickar e-post till användaren..."
+if python3 /home/$USER/send_mail.py; then
+    log "E-post skickad till användaren."
+else
+    log "Fel vid e-postskick."
+    exit 1
+fi
+
+# Skriv ut ett meddelande på skärmen
+log "Skriptet slutfört."
 echo "Sending email to user"
